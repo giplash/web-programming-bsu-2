@@ -1,7 +1,13 @@
 const state = {
   data,
   pageId: 3,
-  display: 'buttons'
+  display: 'buttons',
+}
+
+const formData = {
+  nameInput: '',
+  priceInput: '',
+  quantityInput: ''
 }
 
 function setState(path, value) {
@@ -18,10 +24,34 @@ function setState(path, value) {
   render();
 }
 
-function addDataItem(item) {
-  const { id } = item;
+function addDataItem(e) {
+  e.preventDefault();
   const { data } = state;
-  setState('data', { ...data, [id]: item });
+  const { priceInput, nameInput, quantityInput } = formData;
+  let id = 1;
+  while (data[id]) {
+    id++;
+  }
+  const item = {
+    id,
+    name: nameInput,
+    price: priceInput,
+    quantity: quantityInput
+  }
+  setState('data', { 
+    ...data,
+    [id]: { ...item, quantity: quantityInput ? quantityInput : generateQuantity() }
+  });
+  for (let key in formData) {
+    formData[key] = '';
+  }
+  document.querySelectorAll('form input').forEach(item => {
+    item.value = '';
+  })
+}
+
+function generateQuantity() {
+  return Math.round(Math.random() * 30);
 }
 
 function render() {
@@ -110,22 +140,51 @@ function renderTable() {
 }
 
 function renderForm() {
+  const { pageId } = state;
+  const { nameInput, priceInput, quantityInput } = formData;
   document.querySelector('#root').innerHTML += `
   <form>
     <label>
       Name
-      <input type="text" id="name-input"/>
+      <input type="text" id="name-input" value="${nameInput}"/>
     </label>
     <label>
       Price
-      <input type="text" id="price-input"/>
+      <input type="text" id="price-input" value="${priceInput}"/>
     </label>
-    <label>
+
+    ${pageId >= 2 ? 
+    `<label>
       Quantity
-      <input type="text" id="quantity-input"/>
-    </label>
+      <input type="text" id="quantity-input"  value="${quantityInput}"/>
+    </label>` : ''
+    }
     <button id="add-button">Add</button>
   </form> `
+  document.querySelector('#name-input').addEventListener(
+    'input',
+    function(e) {
+      formData.nameInput = e.target.value;
+    }
+  );
+  document.querySelector('#price-input').addEventListener(
+    'input',
+    function(e) {
+      formData.priceInput = e.target.value;
+    }
+  );
+  if (document.querySelector('#quantity-input')) {
+    document.querySelector('#quantity-input').addEventListener(
+      'input',
+      function(e) {
+        formData.quantityInput = e.target.value;
+      }
+    );
+  }
+  document.querySelector('#add-button').addEventListener(
+    'click',
+    addDataItem
+  )
 }
 
 render();
