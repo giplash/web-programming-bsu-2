@@ -2,7 +2,6 @@ const state = {
   data,
   pageId: 3,
   display: 'buttons',
-  sort: 'name'
 }
 
 const formData = {
@@ -134,7 +133,7 @@ function renderTable() {
     const idMain = `<div class="cell main-cell">ID</div>`
     document.querySelector("#id").innerHTML += idMain;
   }
-  sort(Object.values(data)).forEach((item) => {
+  Object.values(data).forEach((item) => {
     const name = `<div class="cell">${item.name}</div>`
     document.querySelector('#name').innerHTML += name;
     const price = `<div class="cell">${item.price}</div>`
@@ -199,28 +198,7 @@ function renderForm() {
 }
 
 function addListeners() {
-  document.querySelectorAll('.main-cell').forEach(item => {
-    item.addEventListener('click', function() {
-      const parent = this.parentElement;
-      setState('sort', parent.id)
-    })
-  })
+  document.querySelectorAll('.main-cell').forEach(console.log)
 };
-
-function sort(array) {
-  const { sort } = state;
-  if (sort === 'name') {
-    return array.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (sort === 'id') {
-    return array.sort((a, b) => a.id - b.id);
-  }
-  if (sort === 'price') {
-    return array.sort((a, b) => a.price - b.price);
-  }
-  if (sort === 'quantity') {
-    return array.sort((a, b) => a.quantity - b.quantity);
-  }
-}
 
 render();
